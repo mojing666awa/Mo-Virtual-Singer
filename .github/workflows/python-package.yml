@@ -8,11 +8,16 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: windows-latest  # ✅ MVS 目标平台为 Windows，与你的本地环境一致
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10"]  # 锁定你指定的 Python 3.10
+        python-version: ["3.10"]
+
+    # [FIX] 全局强制 UTF-8，防止 Windows 终端编码问题
+    env:
+      PYTHONUTF8: 1
+      PYTHONIOENCODING: utf-8
 
     steps:
     - uses: actions/checkout@v4
@@ -23,26 +28,25 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
 
-    # 🔥 关键步骤1: PyTorch 必须走官方 cu124 索引，不能从默认 PyPI 安装
+    # PyTorch 必须走官方 cu124 索引
     - name: Install PyTorch with CUDA 12.4
       run: |
         pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu124
 
-    # 🔥 关键步骤2: Cython 必须在其他依赖之前单独安装
-    # 否则 monotonic-align 或本地 setup.py 构建时会因找不到 Cython 而失败
+    # Cython 必须在其他依赖之前单独安装
     - name: Pre-install Cython
       run: pip install Cython==3.0.11 numpy==1.26.4
 
     - name: Install MVS Core Dependencies
       run: pip install -r requirements.txt
 
-    # 🔥 关键步骤3: 验证 MAS 模块可正常导入
+    # [FIX] 验证 MAS 模块：移除 emoji + 验证核心 C 扩展
     - name: Verify Monotonic Align
-      run: python -c "import monotonic_align; print('✅ MAS module loaded successfully')"
+      run: python -c "from monotonic_align import maximum_path_c; print('[OK] MAS module loaded successfully')"
 
-    # 基础语法与导入检查（不依赖GPU数据的轻量验证）
+    # 基础语法与导入检查
     - name: Lint & Import Check
       run: |
         pip install flake8
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        python -c "from dataset import NativeMVSDataset; from preprocess import NativeMVSPreprocessor; print('✅ All core modules importable')"
+        python -c "from dataset import NativeMVSDataset; from preprocess import NativeMVSPreprocessor; print('[OK] All core modules importable')"
