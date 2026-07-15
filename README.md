@@ -3,9 +3,11 @@
 > 基于 VITS 架构的虚拟歌手语音合成框架  
 > **Python 3.10 | PyTorch 2.5.1+cu124 | Windows / Linux**
 
-本项目为开箱即用的 MVS 实现，**已内置完整的 VITS 核心模块**（`models.py`, `commons.py`, `losses.py`, `utils.py`）及编译好的 `monotonic_align`，无需额外下载或手动编译。
+本项目为开箱即用的 MVS 实现，**VITS 核心模块（`models.py`, `commons.py`, `losses.py`, `utils.py`）已完整集成于 `monotonic_align/` 目录中**，并包含预编译的 C++ 扩展（`.pyd` / `.so`），无需额外安装或手动编译
 
 ## 📁 项目结构
+
+```text
 mvs-core/
 ├── .github/workflows/
 │   └── python-package.yml      # CI：验证环境安装与 MAS 模块导入
@@ -15,25 +17,21 @@ mvs-core/
 │
 ├── data/                       # 📥 用户数据目录（需手动填充 wav + json）
 │
-├── monotonic_align/            # ⚙️ MAS 对齐模块（本地编译目录，非 pip 包）
-│   ├── *.pyd / *.so            # ✅ 已编译的 C++ 扩展（Windows/Linux）
+├── monotonic_align/            # ⚙️ 【核心】VITS + MAS 集成目录（本地编译，非 pip 包）
+│   ├── *.pyd                   # ✅ Windows 编译产物（已提供）
+│   ├── *.so                    # ✅ Linux 编译产物（已提供）
+│   ├── setup.py                # 🛠️ 编译脚本（如需重编译）
 │   ├── check.py                # 🔍 MAS 独立验证脚本
-│   └── ...                     # 其他 MAS 辅助文件
+│   ├── commons.py              # 📦 [VITS 核心] 基础算子（sequence_mask, slice_segments...）
+│   ├── losses.py               # 💥 [VITS 核心] 损失函数（discriminator_loss, kl_loss...）
+│   ├── models.py               # 🏗️ [VITS 核心] 模型定义（SynthesizerTrn, Discriminator...）
+│   ├── utils.py                # 🛠️ [VITS 核心] 工具函数（load_checkpoint, get_hparams...）
+│   └── __init__.py             # 📦 使该目录可被 import
 │
-├── commons.py                  # 📦 [VITS 核心] 基础算子：sequence_mask, slice_segments, rand_slice 等
-│                               #    ⚠️ 从 jaywalnut310/vits 复制，请勿修改
-├── losses.py                   # 💥 [VITS 核心] 损失函数：discriminator_loss, generator_loss, kl_loss, mel_loss
-│                               #    ⚠️ 从 jaywalnut310/vits 复制，请勿修改
-├── models.py                   # 🏗️ [VITS 核心] 模型定义：SynthesizerTrn, Discriminator, ResidualCouplingBlock
-│                               #    ⚠️ 从 jaywalnut310/vits 复制，MVS 扩展在此文件基础上进行
-├── utils.py                    # 🛠️ [VITS 核心] 工具函数：load_checkpoint, get_hparams, plot_spectrogram_to_numpy
-│                               #    ⚠️ 从 jaywalnut310/vits 复制，请勿修改
-│
-├── dataset.py                  # 🗃️ [MVS 自定义] 数据集加载器：适配 wav+json 标注格式
-├── preprocess.py               # 🧹 [MVS 自定义] 数据预处理：音素提取、MIDI 对齐、姿态向量生成
-├── train.py                    # 🎯 [MVS 主入口] 训练循环：整合数据加载、模型训练、日志记录、Checkpoint 保存
-│
-├── vits_singer.py              # 🗑️ [已废弃] 老版入口文件，请使用 train.py
+├── dataset.py                  # 🗃️ [MVS 自定义] 数据集加载器（适配 wav+json 标注格式）
+├── preprocess.py               # 🧹 [MVS 自定义] 数据预处理（音素/MIDI/姿态生成）
+├── train.py                    # 🎯 [MVS 主入口] 训练循环（通过 `from monotonic_align.models import ...` 导入核心模块）
+├── vits_singer.py              # 🗑️ [已废弃] 老版入口文件，请勿使用
 ├── requirements.txt            # 📦 全局依赖清单
 ├── LICENSE                     # 📜 开源协议
 └── README.md                   # 📖 本文件
