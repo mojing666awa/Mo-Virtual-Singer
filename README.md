@@ -7,26 +7,37 @@
 
 ## 📁 项目结构
 
-```text
 mvs-core/
-├── configs/                # 训练配置文件
-│   └── mvs_base.json       # 默认配置
-├── data/                   # 音频与标注数据（用户放置）
-├── monotonic_align/        # ✅ 已编译的 MAS 模块（含 .pyd/.so）
-│   ├── LICENSE
-│   ├── README.md
-│   ├── check.py
-│   ├── commons.py
-│   ├── dataset.py
-│   ├── losses.py
-│   ├── models.py
-│   ├── preprocess.py
-│   ├── requirements.txt
-│   ├── train.py
-│   ├── utils.py
-│   └── vits_singer.py      # 主入口（原 vits_singer.py）
-├── README.md               # 本文件
-└── requirements.txt        # 全局依赖清单
+├── .github/workflows/
+│   └── python-package.yml      # CI：验证环境安装与 MAS 模块导入
+│
+├── configs/
+│   └── mvs_base.json           # 🔧 主配置文件（需按数据修改 n_vocab/sample_rate/segment_size）
+│
+├── data/                       # 📥 用户数据目录（需手动填充 wav + json）
+│
+├── monotonic_align/            # ⚙️ MAS 对齐模块（本地编译目录，非 pip 包）
+│   ├── *.pyd / *.so            # ✅ 已编译的 C++ 扩展（Windows/Linux）
+│   ├── check.py                # 🔍 MAS 独立验证脚本
+│   └── ...                     # 其他 MAS 辅助文件
+│
+├── commons.py                  # 📦 [VITS 核心] 基础算子：sequence_mask, slice_segments, rand_slice 等
+│                               #    ⚠️ 从 jaywalnut310/vits 复制，请勿修改
+├── losses.py                   # 💥 [VITS 核心] 损失函数：discriminator_loss, generator_loss, kl_loss, mel_loss
+│                               #    ⚠️ 从 jaywalnut310/vits 复制，请勿修改
+├── models.py                   # 🏗️ [VITS 核心] 模型定义：SynthesizerTrn, Discriminator, ResidualCouplingBlock
+│                               #    ⚠️ 从 jaywalnut310/vits 复制，MVS 扩展在此文件基础上进行
+├── utils.py                    # 🛠️ [VITS 核心] 工具函数：load_checkpoint, get_hparams, plot_spectrogram_to_numpy
+│                               #    ⚠️ 从 jaywalnut310/vits 复制，请勿修改
+│
+├── dataset.py                  # 🗃️ [MVS 自定义] 数据集加载器：适配 wav+json 标注格式
+├── preprocess.py               # 🧹 [MVS 自定义] 数据预处理：音素提取、MIDI 对齐、姿态向量生成
+├── train.py                    # 🎯 [MVS 主入口] 训练循环：整合数据加载、模型训练、日志记录、Checkpoint 保存
+│
+├── vits_singer.py              # 🗑️ [已废弃] 老版入口文件，请使用 train.py
+├── requirements.txt            # 📦 全局依赖清单
+├── LICENSE                     # 📜 开源协议
+└── README.md                   # 📖 本文件
 🔍 关键说明：
 monotonic_align/ 是 本地目录，非 pip 包。其内部包含 setup.py 和已编译的 .pyd（Windows）或 .so（Linux）文件。
 所有 VITS 核心代码（models.py, commons.py 等）直接位于 monotonic_align/ 目录下，train.py 通过 from monotonic_align.models import SynthesizerTrn 导入。
