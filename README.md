@@ -76,7 +76,7 @@ pip install -r requirements.txt
 pn_vocab：必须 = max_phoneme_id + 1 + 128(MIDI) + 32(姿态)
 }
 ```
-segment_size：显存适配参考：24G → 8192，12G → 4096
+*segment_size：显存适配参考：24G → 8192，12G → 4096*
 ### Step 4: 启动训练ython -c "from monotonic_align import mas; print('✅ MAS binary loaded successfully')"
 
 >✅ 成功输出表示 monotonic_align/ 中的编译扩展已正确加载。
