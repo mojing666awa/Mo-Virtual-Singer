@@ -38,7 +38,7 @@ mvs-core/
 ├── requirements.txt            # 📦 全局依赖清单
 ├── LICENSE                     # 📜 开源协议
 └── README.md                   # 📖 本文件
----
+```
 🔑 关键说明
 - 根目录四个核心脚本：commons.py, losses.py, models.py, utils.py 是从 jaywalnut310/vits 复制的必要依赖，直接由 train.py 和 preprocess.py 调用。
 - monotonic_align/ 仅含编译产物：该文件夹内只有 .pyd（Windows）或 .so（Linux）二进制文件，不包含任何 Python 源码。MAS 对齐算法已通过 C++ 编译加速，开箱即用。
