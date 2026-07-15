@@ -47,34 +47,26 @@ mvs-core/
 ## ⚙️ 环境配置（Windows 优先）
 ### 1. 创建环境
 ```
-{
 conda create -n mvs-py python=3.10 -y
 conda activate mvs-py
-}
 ```
 
 ### 2. 安装 PyTorch (CUDA 12.4)
 ```
-{
 pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu124
-}
 ```
 ### 3.安装依赖
 ```
-{
 # Cython 必须先装（用于后续可能的 MAS 重编译）
 pip install Cython==3.0.11 numpy==1.26.4
 
 # 安装其余依赖
 pip install -r requirements.txt
-}
 ```
 
 ### 4. 验证 MAS 是否可用
 ```
-{
 pn_vocab：必须 = max_phoneme_id + 1 + 128(MIDI) + 32(姿态)
-}
 ```
 *`segment_size：显存适配参考：24G → 8192，12G → 4096`*
 ### Step 4: 启动训练ython -c "from monotonic_align import mas; print('✅ MAS binary loaded successfully')"
@@ -87,36 +79,28 @@ pn_vocab：必须 = max_phoneme_id + 1 + 128(MIDI) + 32(姿态)
 - 每个 xxx.wav 需配同名 xxx.json（含音素、MIDI、姿态序列等）
 ### Step 2: 预处理
 ```
-{
  python preprocess.py --config configs/mvs_base.json
-}
 ```
 >输出示例：✅ Done! 1287 valid samples
 ### Step 3: 核对配置
 打开 configs/mvs_base.json，重点检查：
 ```
 {
-{
   "n_vocab": 709,
   "sample_rate": 22050,
   "segment_size": 8192,
   "max_batch_tokens": 4096
-}
 }
 ```
 - n_vocab：必须 = max_phoneme_id + 1 + 128(MIDI) + 32(姿态)
 - segment_size：显存适配参考：24G → 8192，12G → 4096
 ### Step 4: 启动训练
 ```
-{
  python train.py --config configs/mvs_base.json
-}
 ```
 ### Step 5: 监控
 ```
-{
  tensorboard --logdir logs/mvs_native
-}
 ```
 ## 🛠️ 常见问题
 | 问题 | 解决方案 |
