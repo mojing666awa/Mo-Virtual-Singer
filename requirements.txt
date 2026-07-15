@@ -1,0 +1,38 @@
+# ==========================================
+# Mo Virtual Singer (MVS) Core Dependencies
+# Python: 3.10 | PyTorch: 2.5.1+cu124
+# ==========================================
+
+# --- 核心深度学习框架 (必须通过特定索引安装) ---
+# torch==2.5.1
+# torchvision==0.20.1
+# torchaudio==2.5.1
+
+# --- ⚠️ VITS 原生编译与推理强依赖 (新增) ---
+Cython==3.0.11             # 编译 monotonic_align 必备
+monotonic-align            # 预编译MAS包(免VS Build Tools, 若手动编译成功可不装)
+transformers==4.44.2       # WavLM 姿态特征提取器
+scikit-learn==1.5.2        # KMeans 姿态聚类 (preprocess.py 强依赖)
+
+# --- 音频处理与信号分析 ---
+librosa==0.10.2.post1
+soundfile==0.12.1
+einops==0.8.0
+
+# --- 训练框架与工具 ---
+lightning==2.4.0
+tensorboard==2.17.1
+
+# --- 姿态空间与检索 ---
+faiss-cpu==1.8.0.post1
+
+# --- 数据处理与科学计算 ---
+numpy==1.26.4              # ✅ 锁定1.x正确, transformers/sklearn均兼容
+scipy==1.14.1
+tqdm==4.66.5
+pyyaml==6.0.2
+
+# --- 研究与可视化 ---
+jupyterlab==4.2.5
+matplotlib==3.9.2
+umap-learn==0.5.6
