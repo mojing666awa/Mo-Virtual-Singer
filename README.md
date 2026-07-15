@@ -6,7 +6,7 @@
 本项目为开箱即用的 MVS 实现，**已内置完整的 VITS 核心模块**（`models.py`, `commons.py`, `losses.py`, `utils.py`）及编译好的 `monotonic_align`，无需额外下载或手动编译。
 
 ## 📁 项目结构
-
+text```
 mvs-core/
 ├── .github/workflows/
 │   └── python-package.yml      # CI：验证环境安装与 MAS 模块导入
